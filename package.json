@@ -1,0 +1,40 @@
+{
+  "name": "proj",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "bin": {
+    "proj": "bin/proj"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "<rootDir>/scripts/test-ts.js"
+    },
+    "testMatch": [
+      "**/*.test.(ts|tsx|js)"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^8.5.2",
+    "jest": "^22.0.4",
+    "prettier": "^1.9.2",
+    "rimraf": "^2.6.2",
+    "ts-node": "^4.1.0",
+    "tslint": "^5.8.0",
+    "tslint-config-prettier": "^1.6.0",
+    "tslint-plugin-prettier": "^1.3.0",
+    "typescript": "^2.6.2"
+  },
+  "dependencies": {
+    "diff": "^3.4.0",
+    "mkdirp": "^0.5.1"
+  }
+}
