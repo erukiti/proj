@@ -1,4 +1,4 @@
-import { Directory, read, write } from './directory'
+import { Directory, read, write } from './cache'
 
 describe('read', () => {
   it('read file', () => {

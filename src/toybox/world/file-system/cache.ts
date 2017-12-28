@@ -4,6 +4,16 @@ export interface Directory {
   [props: string]: string | Buffer | Directory
 }
 
+interface ReadResult {
+  error?: any
+  content?: string | Buffer
+  files?: string[]
+}
+
+interface WriteResult {
+  error?: any
+}
+
 const isDirectory = file => typeof file === 'object' && !(file instanceof Buffer)
 
 const intoDirectory = (
@@ -36,7 +46,7 @@ const intoDirectory = (
   return { dir: file, basename: paths[0] }
 }
 
-export const read = (dir: Directory, filename: string): { error?; content?: string | Buffer; files?: string[] } => {
+export const read = (dir: Directory, filename: string): ReadResult => {
   const { dir: targetDir, basename, error } = intoDirectory(dir, filename)
   if (error) {
     return { error }
@@ -52,7 +62,7 @@ export const read = (dir: Directory, filename: string): { error?; content?: stri
   }
 }
 
-export const write = (dir: Directory, filename: string, content: string | Buffer): { error?: any } => {
+export const write = (dir: Directory, filename: string, content: string | Buffer): WriteResult => {
   const { dir: targetDir, basename, error } = intoDirectory(dir, filename, true)
   if (error) {
     return { error }
@@ -63,4 +73,19 @@ export const write = (dir: Directory, filename: string, content: string | Buffer
 
   targetDir[basename] = content
   return {}
+}
+
+export class Cache {
+  private _root: Directory
+  constructor() {
+    this._root = {}
+  }
+
+  public read(filename: string) {
+    return read(this._root, filename)
+  }
+
+  public write(filename: string, content: string | Buffer) {
+    return write(this._root, filename, content)
+  }
 }
