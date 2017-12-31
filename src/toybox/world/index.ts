@@ -1,6 +1,6 @@
-import { FileSystem } from './file-system'
+import { Filesystem } from './filesystem'
 export abstract class World {
-  private _fs: FileSystem
+  private _fs: Filesystem
 
   public abstract async setup()
   public abstract async runCode(sourceCode: string)

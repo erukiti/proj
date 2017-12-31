@@ -1,17 +1,9 @@
 import * as assert from 'assert'
 
+import { ReadResult, WriteResult } from './index'
+
 export interface Directory {
   [props: string]: string | Buffer | Directory
-}
-
-interface ReadResult {
-  error?: any
-  content?: string | Buffer
-  files?: string[]
-}
-
-interface WriteResult {
-  error?: any
 }
 
 const isDirectory = file => typeof file === 'object' && !(file instanceof Buffer)
