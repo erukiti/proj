@@ -1,7 +1,7 @@
-import { Directory, read, write } from './cache'
+import { Directory, read, remove, write } from './cache'
 
 describe('read', () => {
-  it('read file', () => {
+  it('file', () => {
     const dir: Directory = {
       'hoge.txt': 'hoge'
     }
@@ -11,7 +11,7 @@ describe('read', () => {
     expect(content).toEqual('hoge')
   })
 
-  it('read directory', () => {
+  it('directory', () => {
     const dir: Directory = {
       hoge: {
         'fuga.txt': 'fuga'
@@ -23,7 +23,7 @@ describe('read', () => {
     expect(content).toBeUndefined()
   })
 
-  it('file is not found', () => {
+  it('entry is not found', () => {
     const dir: Directory = {
       'wrong.txt': 'wrong'
     }
@@ -33,7 +33,7 @@ describe('read', () => {
     expect(content).toBeUndefined()
   })
 
-  it('file is not directory', () => {
+  it('entry is not directory', () => {
     const dir: Directory = {
       hoge: {
         fuga: 'fuga'
@@ -45,7 +45,7 @@ describe('read', () => {
     expect(content).toBeUndefined()
   })
 
-  it('file is not found (directory)', () => {
+  it('entry is not found (directory)', () => {
     const dir: Directory = {
       hoge: {
         wrong: {
@@ -75,7 +75,7 @@ describe('write', () => {
     expect(dir).toEqual({ hoge: { 'fuga.txt': 'fuga' } })
   })
 
-  it('dont overwrite direcotry by file', () => {
+  it('do not overwrite direcotry by file', () => {
     const dir: Directory = {
       hoge: {
         'fuga.txt': 'fuga'
@@ -93,5 +93,25 @@ describe('write', () => {
     const { error } = write(dir, 'hoge/fuga.txt', 'fuga')
     expect(error).toEqual({ code: 'NOT_DIRECTORY', message: 'hoge is not directory.' })
     expect(dir).toEqual({ hoge: 'hoge' })
+  })
+})
+
+describe('remove', () => {
+  it('normal', () => {
+    const dir: Directory = {
+      'hoge.txt': 'hoge'
+    }
+    const { error } = remove(dir, 'hoge.txt')
+    expect(error).toBeUndefined()
+    expect(dir).toEqual({})
+  })
+
+  it('not found', () => {
+    const dir: Directory = {
+      'hoge.txt': 'hoge'
+    }
+    const { error } = remove(dir, 'wrong.txt')
+    expect(error).toEqual({ code: 'NOT_FOUND', message: 'wrong.txt is not found.' })
+    expect(dir).toEqual({ 'hoge.txt': 'hoge' })
   })
 })

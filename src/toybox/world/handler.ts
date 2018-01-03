@@ -1,7 +1,6 @@
 import { EventEmitter } from 'events'
 
-type FsEvent = 'edit' | 'create' | 'update' | 'remove'
-type FsEventListener = (filepath: string) => void
+import { FsEvent, FsEventListener } from './filesystem'
 
 export class Handler {
   private _ev: EventEmitter

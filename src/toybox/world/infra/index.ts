@@ -1,6 +1,6 @@
-import { ReadResult, WriteResult } from '../filesystem'
+import { Content, ReadResult, WriteResult } from '../filesystem'
 
 export interface FsInfra {
   read: (filename: string) => Promise<ReadResult>
-  write: (filename: string, content: string | Buffer) => Promise<WriteResult>
+  write: (filename: string, content: Content) => Promise<WriteResult>
 }

@@ -1,41 +1,44 @@
 import * as assert from 'assert'
 
-import { ReadResult, WriteResult } from './index'
+import { Content, FsError, ReadResult, RemoveResult, WriteResult } from './index'
 
+type Entry = Content | Directory
+
+// for unit testing
 export interface Directory {
-  [props: string]: string | Buffer | Directory
+  [props: string]: Entry
 }
 
-const isDirectory = file => typeof file === 'object' && !(file instanceof Buffer)
+const isDirectory = (entry: Entry) => typeof entry === 'object' && !(entry instanceof Buffer)
 
 const intoDirectory = (
   dir: Directory,
   filename: string,
   isMkdir?: boolean
-): { dir?: string | Buffer | Directory; basename?: string; error?: any } => {
+): { dir?: Entry; basename?: string; error?: FsError } => {
   assert(filename !== '')
   assert(typeof dir === 'object')
   const paths = filename.split('/')
   assert(paths.length >= 1)
 
-  let file: string | Buffer | Directory = dir
+  let entry: Entry = dir
 
   while (paths.length > 1) {
     const node = paths.shift()
-    if (node in (file as Directory)) {
-      if (!isDirectory(file[node])) {
+    if (node in (entry as Directory)) {
+      if (!isDirectory(entry[node])) {
         return { error: { code: 'NOT_DIRECTORY', message: `${node} is not directory.` } }
       }
     } else {
       if (!isMkdir) {
         return { error: { code: 'NOT_FOUND', message: `${node} is not found.` } }
       }
-      file[node] = {}
+      entry[node] = {}
     }
-    file = file[node]
+    entry = entry[node]
   }
 
-  return { dir: file, basename: paths[0] }
+  return { dir: entry, basename: paths[0] }
 }
 
 export const read = (dir: Directory, filename: string): ReadResult => {
@@ -54,7 +57,7 @@ export const read = (dir: Directory, filename: string): ReadResult => {
   }
 }
 
-export const write = (dir: Directory, filename: string, content: string | Buffer): WriteResult => {
+export const write = (dir: Directory, filename: string, content: Content): WriteResult => {
   const { dir: targetDir, basename, error } = intoDirectory(dir, filename, true)
   if (error) {
     return { error }
@@ -64,6 +67,18 @@ export const write = (dir: Directory, filename: string, content: string | Buffer
   }
 
   targetDir[basename] = content
+  return {}
+}
+
+export const remove = (dir: Directory, filename: string): RemoveResult => {
+  const { dir: targetDir, basename, error } = intoDirectory(dir, filename)
+  if (error) {
+    return { error }
+  }
+  if (!(basename in dir)) {
+    return { error: { code: 'NOT_FOUND', message: `${filename} is not found.` } }
+  }
+  delete dir[basename]
   return {}
 }
 
@@ -77,7 +92,11 @@ export class Cache {
     return read(this._root, filename)
   }
 
-  public write(filename: string, content: string | Buffer) {
+  public write(filename: string, content: Content) {
     return write(this._root, filename, content)
+  }
+
+  public remove(filename: string) {
+    return remove(this._root, filename)
   }
 }

@@ -1,25 +1,18 @@
+import { Handler } from '../handler'
 import { FsInfra } from '../infra'
 import { Cache } from './cache'
-import { Handler } from './handler'
+import { Content } from './types'
 
-export interface ReadResult {
-  error?: any
-  content?: string | Buffer
-  files?: string[]
-}
-
-export interface WriteResult {
-  error?: any
-}
+export * from './types'
 
 export class Filesystem {
   private _cache: Cache
   private _infra: FsInfra
   public handler: Handler
-  constructor(cache: Cache, infra: FsInfra) {
+  constructor(handler: Handler, cache: Cache, infra: FsInfra) {
     this._cache = cache
     this._infra = infra
-    this.handler = new Handler()
+    this.handler = handler
   }
 
   public async read(filename: string) {
@@ -30,7 +23,7 @@ export class Filesystem {
     return res
   }
 
-  public async write(filename: string, content: string | Buffer) {
+  public async write(filename: string, content: Content) {
     await this._infra.write(filename, content)
     this._cache.write(filename, content)
   }

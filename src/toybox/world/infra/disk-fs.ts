@@ -1,6 +1,6 @@
 import * as path from 'path'
 
-import { ReadResult, WriteResult } from '../filesystem'
+import { Content, ReadResult, WriteResult } from '../filesystem'
 import { FsInfra } from './index'
 
 export class DiskFs implements FsInfra {
@@ -17,7 +17,7 @@ export class DiskFs implements FsInfra {
     return this._fs.readFileSync(filepath)
   }
 
-  public async write(filename: string, content: string | Buffer) {
+  public async write(filename: string, content: Content) {
     const filepath = path.join(this._root, filename)
     return this._fs.writeFileSync(filepath, content)
   }
