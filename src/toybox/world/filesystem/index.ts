@@ -13,7 +13,13 @@ export class Filesystem {
     this._cache = cache
     this._infra = infra
     this.handler = handler
+
+    handler.on('create', filename => this._read(filename))
+    handler.on('update', filename => this._read(filename))
+    handler.on('remove', filename => this._remove(filename))
   }
+
+  // FIXME 日付・サイズによる一致確認
 
   public async read(filename: string) {
     const res = this._cache.read(filename)
@@ -37,6 +43,11 @@ export class Filesystem {
   }
 
   private async _remove(filename: string) {
-    // this._cache.delete(filename)
+    return this._cache.remove(filename)
+  }
+
+  public async remove(filename: string) {
+    this._remove(filename)
+    return this._infra.remove(filename)
   }
 }

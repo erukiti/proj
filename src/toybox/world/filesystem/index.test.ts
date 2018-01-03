@@ -4,7 +4,8 @@ import { Filesystem } from './index'
 
 const dummyInfra = {
   read: jest.fn(),
-  write: jest.fn()
+  write: jest.fn(),
+  remove: jest.fn()
 }
 
 describe('read', () => {

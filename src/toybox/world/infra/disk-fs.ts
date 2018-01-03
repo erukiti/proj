@@ -21,4 +21,10 @@ export class DiskFs implements FsInfra {
     const filepath = path.join(this._root, filename)
     return this._fs.writeFileSync(filepath, content)
   }
+
+  public async remove(filename: string) {
+    const filepath = path.join(this._root, filename)
+    return this._fs.unlinkSync(filename)
+    // rmdir
+  }
 }
